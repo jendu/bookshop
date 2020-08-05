@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.net.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane fx:id="wrap" prefHeight="830" prefWidth="1200" styleClass="root" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.LoginViewController">
+    <stylesheets>
+        <URL value="@Style.css" />
+    </stylesheets>
+
+    <top>
+        <HBox id="top" BorderPane.alignment="CENTER">
+            <Label id="header" text="📚 Bookshop" />
+        </HBox>
+    </top>
+
+    <center>
+        <HBox fx:id="view">
+            <VBox id="left" fx:id="left" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" BorderPane.alignment="CENTER">
+                <Label id="leftText" text="Options:" />
+                <Button id="homeBtn" onAction="#home" text="Home" />
+                <Button id="exitBtn" onAction="#exit" text="Exit" />
+            </VBox>
+
+            <GridPane fx:id="center" BorderPane.alignment="CENTER">
+                <columnConstraints>
+                    <ColumnConstraints />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints />
+                    <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+               <RowConstraints />
+                </rowConstraints>
+                <Label id="title" fx:id="title" text="📖 Welcome Bookkeeper!" GridPane.rowIndex="0" />
+                <Label id="content" text="Please login in order to manage books/discounts." GridPane.rowIndex="1" />
+
+                <Label id="content" text="Username:"  GridPane.rowIndex="2" />
+                <TextField fx:id="username" maxWidth="250.0" minWidth="250.0" prefWidth="250.0" GridPane.rowIndex="3" />
+
+                <Label id="content" text="Password:"  GridPane.rowIndex="4" />
+                <PasswordField fx:id="password" maxWidth="250.0" minWidth="250.0" prefWidth="250.0"  GridPane.rowIndex="5" />
+
+                <Button fx:id="login" text="Login"  onAction="#login" GridPane.rowIndex="6" />
+                <Label fx:id="msg" text="" style="-fx-font-weight:bold;-fx-text-fill:#924EAB" GridPane.rowIndex="7" />
+
+            </GridPane>
+        </HBox>
+    </center>
+
+</BorderPane>
