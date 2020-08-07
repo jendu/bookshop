@@ -32,12 +32,12 @@
     -fx-padding: 20;
 }
 
-#title {
+#title, #mainTitle, #finalCost {
      -fx-text-fill: #654C6E;
      -fx-font: 20px Verdana;
 }
 
-#content {
+#content, #mainContent {
      -fx-font: 13px Verdana;
 }
 

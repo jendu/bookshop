@@ -1,6 +1,7 @@
 package View;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,6 +20,8 @@ import javafx.util.converter.IntegerStringConverter;
 import java.io.IOException;
 import java.net.URL;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -27,11 +30,30 @@ import Model.*;
 
 public class BookkeeperViewController implements Initializable {
 
-    private Alert a;
-    private static ObservableList<Book> booksList;
-    private static ObservableList<Discount> discountsPerBookList;
-    private static ObservableList<Discount> discountsOnTotalList;
-    private static ObservableList<Book> shoppingList;
+    //initialising for TestFX
+    public ObservableList<Book> booksList =
+            FXCollections.observableArrayList(
+                    new Book("Moby Dick", 1851, 15.20),
+                    new Book("The Terrible Privacy of Maxwell Sim", 2010, 13.14),
+                    new Book("Still Life With Woodpecker", 1980, 11.05),
+                    new Book("Sleeping Murder", 1976, 10.24),
+                    new Book("Three Men in a Boat", 1889, 12.87),
+                    new Book("The Time Machine", 1895, 10.43),
+                    new Book("The Caves of Steel", 1954, 8.12),
+                    new Book("Idle Thoughts of an Idle Fellow", 1886, 7.32),
+                    new Book("A Christmas Carol", 1843, 4.23),
+                    new Book("A Tale of Two Cities", 1859, 6.32),
+                    new Book("Great Expectations", 1861, 13.21)
+            );
+    public ObservableList<Discount> discountsPerBookList =
+            FXCollections.observableArrayList(
+                    new Discount(">", 2000, 10)
+            );
+    public ObservableList<Discount> discountsOnTotalList =
+            FXCollections.observableArrayList(
+                    new Discount(">", 30, 5)
+            );
+    public ObservableList<Book> shoppingList = FXCollections.observableArrayList();
 
     public void transferLists(ObservableList<Book> booksList, ObservableList<Discount> discountsPerBookList,
                               ObservableList<Discount> discountsOnTotalList, ObservableList<Book>  shoppingList) {
@@ -79,16 +101,14 @@ public class BookkeeperViewController implements Initializable {
         HomeViewController homeViewController = loader.getController();
         homeViewController.transferLists(booksList, discountsPerBookList, discountsOnTotalList, shoppingList);
 
-        Scene customerScene = new Scene(root, 1200, 830);
-
         Stage primaryStage = (Stage) view.getScene().getWindow();
-        primaryStage.setScene(customerScene);
+        primaryStage.setScene(new Scene(root, 1200, 830));
         primaryStage.show();
     }
 
     @FXML
     void exit(ActionEvent e) {
-        a = new Alert(Alert.AlertType.CONFIRMATION);
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
         a.setContentText("Are you sure you want to exit?");
         Optional<ButtonType> result = a.showAndWait();
         ButtonType button = result.orElse(ButtonType.CANCEL);
@@ -100,7 +120,6 @@ public class BookkeeperViewController implements Initializable {
 
     @FXML
     void addBook(ActionEvent e) {
-
         String title = newTitle.getText();
         String year = newYear.getText();
         String price = newPrice.getText();
@@ -189,25 +208,25 @@ public class BookkeeperViewController implements Initializable {
 
         boolean success = true;
         if(condition.isEmpty() || !condition.matches("<|<=|>|>=|==")) {
-            msg.setText("Add Per Book Discount: Condition must be <, <=, >, >= or ==.");
+            msg.setText("Add On Total Discount: Condition must be <, <=, >, >= or ==.");
             success=false;
         } else if(conditionValue.isEmpty()) {
-            msg.setText("Add Per Book Discount: Condition value cannot be empty.");
+            msg.setText("Add On Total Discount: Condition value cannot be empty.");
             success=false;
         } else if(!isNumeric(conditionValue,'d')) {
-            msg.setText("Add Per Book Discount: Please enter a valid condition price > 0.");
+            msg.setText("Add On Total Discount: Please enter a valid condition price > 0.");
             success=false;
         } else if(Double.parseDouble(conditionValue) <= 0) {
-            msg.setText("Add Per Book Discount: Please enter a valid condition price > 0.");
+            msg.setText("Add On Total Discount: Please enter a valid condition price > 0.");
             success=false;
         } else if(amount.isEmpty()) {
-            msg.setText("Add Per Book Discount: Amount cannot be empty.");
+            msg.setText("Add On Total Discount: Amount cannot be empty.");
             success=false;
         } else if(!isNumeric(amount, 'i')) {
-            msg.setText("Add Per Book Discount: Please enter a valid integer amount >= 0 and <=100.");
+            msg.setText("Add On Total Discount: Please enter a valid integer amount >= 0 and <=100.");
             success=false;
         } else if(Integer.parseInt(amount) < 0 || Integer.parseInt(amount)>100) {
-            msg.setText("Add Per Book Discount: Please enter a valid integer amount >= 0 and <=100.");
+            msg.setText("Add On Total Discount: Please enter a valid integer amount >= 0 and <=100.");
             success=false;
         }
 
@@ -225,10 +244,19 @@ public class BookkeeperViewController implements Initializable {
     @FXML
     void removeBook(ActionEvent e) {
         int selectedBook = availableBooks.getSelectionModel().getSelectedIndex();
+        Book removedBook = availableBooks.getSelectionModel().getSelectedItem();
         try {
             booksList.remove(selectedBook);
             availableBooks.getItems().remove(selectedBook);
-            shoppingList.remove(selectedBook);
+            List<Book> toRemove = new ArrayList<>();
+            for(Book b: shoppingList) {
+                if(b.getBookTitle().equals(removedBook.getBookTitle())) {
+                    toRemove.add(b);
+                }
+             }
+            for(Book b: toRemove) {
+                shoppingList.remove(b);
+            }
             availableBooks.refresh();
             msg.setText("Remove Book: Removed book successfully.");
         } catch(IndexOutOfBoundsException ex) {
@@ -274,26 +302,24 @@ public class BookkeeperViewController implements Initializable {
             }
         } catch (NumberFormatException e) {
             return false;
-        } catch(Exception e) {
-            throw e;
         }
 
         return true;
     }
 
     private void setupBooksList() {
-        bookTitleCol.setCellValueFactory(new PropertyValueFactory<Book, String>("bookTitle"));
+        bookTitleCol.setCellValueFactory(new PropertyValueFactory<>("bookTitle"));
         bookTitleCol.setCellFactory(TextFieldTableCell.forTableColumn());
         bookTitleCol.setOnEditCommit(t -> {
             if(!t.getNewValue().isEmpty()) {
-                ((Book) t.getTableView().getItems().get(t.getTablePosition().getRow())).setBookTitle(t.getNewValue());
+                (t.getTableView().getItems().get(t.getTablePosition().getRow())).setBookTitle(t.getNewValue());
             } else {
                 msg.setText("Modify Book Title: Please enter a valid title.");
-                ((Book) t.getTableView().getItems().get(t.getTablePosition().getRow())).setBookTitle(t.getOldValue());
+                (t.getTableView().getItems().get(t.getTablePosition().getRow())).setBookTitle(t.getOldValue());
                 t.getTableView().refresh();
             }
         });
-        bookYearCol.setCellValueFactory(new PropertyValueFactory<Book, Integer>("bookYear"));
+        bookYearCol.setCellValueFactory(new PropertyValueFactory<>("bookYear"));
         bookYearCol.setCellFactory(TextFieldTableCell.forTableColumn(
                 new IntegerStringConverter(){
                     public Integer fromString(String s) {
@@ -313,20 +339,20 @@ public class BookkeeperViewController implements Initializable {
         );
         bookYearCol.setOnEditCommit(t -> {
             if(t.getNewValue() > 0) {
-                ((Book) t.getTableView().getItems().get(t.getTablePosition().getRow())).setBookYear(t.getNewValue());
+                t.getTableView().getItems().get(t.getTablePosition().getRow()).setBookYear(t.getNewValue());
             } else {
                 msg.setText("Modify Book Year: Please enter a valid year > 0.");
-                ((Book) t.getTableView().getItems().get(t.getTablePosition().getRow())).setBookYear(t.getOldValue());
+                t.getTableView().getItems().get(t.getTablePosition().getRow()).setBookYear(t.getOldValue());
                 t.getTableView().refresh();
             }
         });
-        bookPriceCol.setCellValueFactory(new PropertyValueFactory<Book, Double>("bookPrice"));
+        bookPriceCol.setCellValueFactory(new PropertyValueFactory<>("bookPrice"));
         bookPriceCol.setOnEditCommit(t -> {
             if(t.getNewValue() >= 0) {
-                ((Book) t.getTableView().getItems().get(t.getTablePosition().getRow())).setBookPrice(t.getNewValue());
+                t.getTableView().getItems().get(t.getTablePosition().getRow()).setBookPrice(t.getNewValue());
             } else {
                 msg.setText("Modify Book Price: Please enter a valid price >= 0.");
-                ((Book) t.getTableView().getItems().get(t.getTablePosition().getRow())).setBookPrice(t.getOldValue());
+                t.getTableView().getItems().get(t.getTablePosition().getRow()).setBookPrice(t.getOldValue());
                 t.getTableView().refresh();
             }
         });
@@ -366,24 +392,24 @@ public class BookkeeperViewController implements Initializable {
     }
 
     private void setupDiscountsPerBookList() {
-        conditionBookCol.setCellValueFactory(new PropertyValueFactory<Discount, String>("condition"));
+        conditionBookCol.setCellValueFactory(new PropertyValueFactory<>("condition"));
         conditionBookCol.setCellFactory(TextFieldTableCell.forTableColumn());
         conditionBookCol.setOnEditCommit(t -> {
             if(t.getNewValue().matches("<|<=|>|>=|==")) {
-                ((Discount) t.getTableView().getItems().get(t.getTablePosition().getRow())).setCondition(t.getNewValue());
+                t.getTableView().getItems().get(t.getTablePosition().getRow()).setCondition(t.getNewValue());
             } else {
                 msg.setText("Modify Discount Condition: Please enter <, <=, >, >= or ==.");
-                ((Discount) t.getTableView().getItems().get(t.getTablePosition().getRow())).setCondition(t.getOldValue());
+                t.getTableView().getItems().get(t.getTablePosition().getRow()).setCondition(t.getOldValue());
                 t.getTableView().refresh();
             }
         });
-        conditionValueBookCol.setCellValueFactory(new PropertyValueFactory<Discount, Double>("conditionValue"));
+        conditionValueBookCol.setCellValueFactory(new PropertyValueFactory<>("conditionValue"));
         conditionValueBookCol.setOnEditCommit(t -> {
             if(t.getNewValue() >= 0) {
-                ((Discount) t.getTableView().getItems().get(t.getTablePosition().getRow())).setConditionValue(t.getNewValue());
+                t.getTableView().getItems().get(t.getTablePosition().getRow()).setConditionValue(t.getNewValue());
             } else {
                 msg.setText("Modify Discount Condition Value: Please enter a valid value > 0.");
-                ((Discount) t.getTableView().getItems().get(t.getTablePosition().getRow())).setConditionValue(t.getOldValue());
+                t.getTableView().getItems().get(t.getTablePosition().getRow()).setConditionValue(t.getOldValue());
                 t.getTableView().refresh();
             }
         });
@@ -413,13 +439,13 @@ public class BookkeeperViewController implements Initializable {
                 }
             }
         });
-        amountBookCol.setCellValueFactory(new PropertyValueFactory<Discount, Integer>("amount"));
+        amountBookCol.setCellValueFactory(new PropertyValueFactory<>("amount"));
         amountBookCol.setOnEditCommit(t -> {
             if(t.getNewValue() > 0 && t.getNewValue()<=100) {
-                ((Discount) t.getTableView().getItems().get(t.getTablePosition().getRow())).setAmount(t.getNewValue());
+                t.getTableView().getItems().get(t.getTablePosition().getRow()).setAmount(t.getNewValue());
             } else {
                 msg.setText("Modify Discount Amount: Please enter a valid amount <= 100, and > 0.");
-                ((Discount) t.getTableView().getItems().get(t.getTablePosition().getRow())).setAmount(t.getOldValue());
+                t.getTableView().getItems().get(t.getTablePosition().getRow()).setAmount(t.getOldValue());
                 t.getTableView().refresh();
             }
         });
@@ -455,24 +481,24 @@ public class BookkeeperViewController implements Initializable {
     }
 
     private void setupDiscountsOnTotalList() {
-        conditionTotalCol.setCellValueFactory(new PropertyValueFactory<Discount, String>("condition"));
+        conditionTotalCol.setCellValueFactory(new PropertyValueFactory<>("condition"));
         conditionTotalCol.setCellFactory(TextFieldTableCell.forTableColumn());
         conditionTotalCol.setOnEditCommit(t -> {
             if(t.getNewValue().matches("<|<=|>|>=|==")) {
-                ((Discount) t.getTableView().getItems().get(t.getTablePosition().getRow())).setCondition(t.getNewValue());
+                (t.getTableView().getItems().get(t.getTablePosition().getRow())).setCondition(t.getNewValue());
             } else {
                 msg.setText("Modify Discount Condition: Please enter <, <=, >, >= or ==.");
-                ((Discount) t.getTableView().getItems().get(t.getTablePosition().getRow())).setCondition(t.getOldValue());
+                (t.getTableView().getItems().get(t.getTablePosition().getRow())).setCondition(t.getOldValue());
                 t.getTableView().refresh();
             }
         });
-        conditionValueTotalCol.setCellValueFactory(new PropertyValueFactory<Discount, Double>("conditionValue"));
+        conditionValueTotalCol.setCellValueFactory(new PropertyValueFactory<>("conditionValue"));
         conditionValueTotalCol.setOnEditCommit(t -> {
             if(t.getNewValue() > 0) {
-                ((Discount) t.getTableView().getItems().get(t.getTablePosition().getRow())).setConditionValue(t.getNewValue());
+                (t.getTableView().getItems().get(t.getTablePosition().getRow())).setConditionValue(t.getNewValue());
             } else {
                 msg.setText("Modify Discount Condition Value: Please enter a valid value > 0.");
-                ((Discount) t.getTableView().getItems().get(t.getTablePosition().getRow())).setConditionValue(t.getOldValue());
+                (t.getTableView().getItems().get(t.getTablePosition().getRow())).setConditionValue(t.getOldValue());
                 t.getTableView().refresh();
             }
         });
@@ -502,13 +528,13 @@ public class BookkeeperViewController implements Initializable {
                 }
             }
         });
-        amountTotalCol.setCellValueFactory(new PropertyValueFactory<Discount, Integer>("amount"));
+        amountTotalCol.setCellValueFactory(new PropertyValueFactory<>("amount"));
         amountTotalCol.setOnEditCommit(t -> {
             if(t.getNewValue() > 0 && t.getNewValue()<=100) {
-                ((Discount) t.getTableView().getItems().get(t.getTablePosition().getRow())).setAmount(t.getNewValue());
+                (t.getTableView().getItems().get(t.getTablePosition().getRow())).setAmount(t.getNewValue());
             } else {
                 msg.setText("Modify Discount Amount: Please enter a valid amount <= 100, and > 0.");
-                ((Discount) t.getTableView().getItems().get(t.getTablePosition().getRow())).setAmount(t.getOldValue());
+                (t.getTableView().getItems().get(t.getTablePosition().getRow())).setAmount(t.getOldValue());
                 t.getTableView().refresh();
             }
         });

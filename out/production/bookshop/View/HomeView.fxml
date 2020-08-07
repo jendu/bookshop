@@ -3,10 +3,9 @@
 <?import java.net.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 
-<BorderPane fx:id="wrap" prefHeight="830" prefWidth="1200" styleClass="root" fx:controller="View.HomeViewController"
-            xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane styleClass="root" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="View.HomeViewController">
     <stylesheets>
         <URL value="@Style.css" />
     </stylesheets>
@@ -18,15 +17,15 @@
     </top>
 
     <center>
-        <HBox fx:id="view">
-            <VBox fx:id="left" id="left" prefWidth="150" BorderPane.alignment="CENTER">
+        <HBox fx:id="view" maxHeight="830.0" minHeight="830.0" prefHeight="830.0">
+            <VBox id="left" prefWidth="150" BorderPane.alignment="CENTER">
                 <Label id="leftText" text="Enter as:" />
-                <Button id="customerBtn" text="Customer" onAction="#viewAsCustomer"/>
-                <Button id="bookkeeperBtn" text="Bookkeeper" onAction="#viewAsBookkeeper" />
-                <Button id="exitBtn" text="Exit" onAction="#exit" />
+                <Button id="customerBtn" onAction="#viewAsCustomer" text="Customer" />
+                <Button id="bookkeeperBtn" onAction="#viewAsBookkeeper" text="Bookkeeper" />
+                <Button id="exitBtn" onAction="#exit" text="Exit" />
             </VBox>
 
-            <GridPane fx:id="center"  BorderPane.alignment="CENTER">
+            <GridPane BorderPane.alignment="CENTER">
                 <columnConstraints>
                     <ColumnConstraints />
                 </columnConstraints>
@@ -34,9 +33,8 @@
                     <RowConstraints />
                     <RowConstraints />
                 </rowConstraints>
-                <Label fx:id="title" id="title" text="📖 Welcome!" GridPane.rowIndex="0" />
-                <Label id="content" text="Welcome to the Bookshop. Please enter either as a customer, or a bookkeeper."
-                      GridPane.rowIndex="1" />
+                <Label id="mainTitle" text="📖 Welcome!" GridPane.rowIndex="0" />
+                <Label id="mainContent" text="Welcome to the Bookshop. Please enter either as a customer, or a bookkeeper." GridPane.rowIndex="1" />
             </GridPane>
         </HBox>
     </center>

@@ -11,7 +11,7 @@ import View.HomeViewController;
 
 public class Main extends Application {
 
-    private ObservableList<Book> booksList =
+    private final ObservableList<Book> booksList =
             FXCollections.observableArrayList(
                     new Book("Moby Dick", 1851, 15.20),
                     new Book("The Terrible Privacy of Maxwell Sim", 2010, 13.14),
@@ -25,15 +25,15 @@ public class Main extends Application {
                     new Book("A Tale of Two Cities", 1859, 6.32),
                     new Book("Great Expectations", 1861, 13.21)
             );
-    private ObservableList<Discount> discountsPerBookList =
+    private final ObservableList<Discount> discountsPerBookList =
             FXCollections.observableArrayList(
                     new Discount(">", 2000, 10)
             );
-    private ObservableList<Discount> discountsOnTotalList =
+    private final ObservableList<Discount> discountsOnTotalList =
             FXCollections.observableArrayList(
                     new Discount(">", 30, 5)
             );
-    private ObservableList<Book> shoppingList = FXCollections.observableArrayList();
+    private final ObservableList<Book> shoppingList = FXCollections.observableArrayList();
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -46,7 +46,6 @@ public class Main extends Application {
         primaryStage.setScene(new Scene(root, 1200, 830));
 
         primaryStage.setTitle("Bookshop");
-        primaryStage.setResizable(false);
         primaryStage.show();
     }
 

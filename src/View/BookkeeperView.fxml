@@ -4,7 +4,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="wrap" prefHeight="830" prefWidth="1200" styleClass="root" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.BookkeeperViewController">
+<BorderPane styleClass="root" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="View.BookkeeperViewController">
     <stylesheets>
         <URL value="@Style.css" />
     </stylesheets>
@@ -12,18 +13,19 @@
     <top>
         <HBox id="top" BorderPane.alignment="CENTER">
             <Label id="header" text="📚 Bookshop" />
+            <Button id="testBtn" maxHeight="0.0" maxWidth="0.0" minHeight="0.0" minWidth="0.0" prefHeight="0.0" prefWidth="0.0" />
         </HBox>
     </top>
 
     <center>
-        <HBox fx:id="view">
-            <VBox id="left" fx:id="left" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" BorderPane.alignment="CENTER">
+        <HBox fx:id="view" maxHeight="830.0" minHeight="830.0" prefHeight="830.0">
+            <VBox id="left" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" BorderPane.alignment="CENTER">
                 <Label id="leftText" text="Options:" />
                 <Button id="logoutBtn" onAction="#logout" text="Logout" />
                 <Button id="exitBtn" onAction="#exit" text="Exit" />
             </VBox>
 
-            <GridPane fx:id="center" hgap="10.0" maxHeight="800.0" maxWidth="1050.0" minHeight="800.0" minWidth="1050.0" prefHeight="800.0" prefWidth="1050.0" vgap="10.0" BorderPane.alignment="CENTER">
+            <GridPane hgap="10.0" maxHeight="800.0" maxWidth="1050.0" minHeight="800.0" minWidth="1050.0" prefHeight="800.0" prefWidth="1050.0" vgap="10.0" BorderPane.alignment="CENTER">
                 <columnConstraints>
                     <ColumnConstraints prefWidth="525" />
                     <ColumnConstraints prefWidth="525" />
@@ -38,8 +40,8 @@
                <RowConstraints />
                 </rowConstraints>
 
-                <Label id="title" text="📖 Available Books" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <Label id="content" alignment="TOP_LEFT" text="Below is the list of books available." wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Label id="mainTitle" text="📖 Available Books" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Label id="mainContent" alignment="TOP_LEFT" text="Below is the list of books available." wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="1" />
                 <Label id="content" alignment="TOP_LEFT" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" text="To modify a book's details, double click it, enter the new value and press enter." wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="2" />
                 <Label id="content" alignment="TOP_LEFT" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" text="To add a new book, enter the values into the text fields below and press 'Add book'." wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="3" />
                 <Label id="content" alignment="TOP_LEFT" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" text="To remove a book, select the book from the table below and press 'Remove book'." wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="4" />
@@ -56,8 +58,8 @@
                         <TextField fx:id="newTitle" maxWidth="120.0" minWidth="120.0" prefWidth="120.0" promptText="Title" />
                         <TextField fx:id="newYear" maxWidth="70.0" minWidth="70.0" prefWidth="70.0" promptText="Year" />
                         <TextField fx:id="newPrice" promptText="Price" />
-                        <Button fx:id="addNewBook" onAction="#addBook" text="Add book" />
-                        <Button fx:id="removeOldBook" onAction="#removeBook" text="Remove book" />
+                        <Button id="addNewBook" onAction="#addBook" text="Add book" />
+                        <Button id="removeOldBook" onAction="#removeBook" text="Remove book" />
                     </HBox>
                 </VBox>
 
@@ -80,8 +82,8 @@
                         <TextField fx:id="newBookCondition" maxWidth="68.0" minWidth="68.0" prefWidth="68.0" promptText="Condition" />
                         <TextField fx:id="newBookConditionValue" maxWidth="106.0" minWidth="106.0" prefWidth="106.0" promptText="Condition Value" />
                         <TextField fx:id="newBookAmount" maxWidth="68.0" minWidth="68.0" prefWidth="68.0" promptText="Amount%" />
-                        <Button fx:id="addBookDiscount" maxWidth="100.0" minWidth="100.0" onAction="#addBookDiscount" prefWidth="100.0" text="Add per book" />
-                        <Button fx:id="removeBookDiscount" maxWidth="115.0" minWidth="115.0" onAction="#removeBookDiscount" prefWidth="115.0" text="Remove per book" />
+                        <Button id="addBookDiscount" maxWidth="100.0" minWidth="100.0" onAction="#addBookDiscount" prefWidth="100.0" text="Add per book" />
+                        <Button id="removeBookDiscount" maxWidth="115.0" minWidth="115.0" onAction="#removeBookDiscount" prefWidth="115.0" text="Remove per book" />
                     </HBox>
 
                     <Label id="content" alignment="TOP_LEFT" maxHeight="35.0" minHeight="35.0" prefHeight="35.0" style="-fx-font-weight:bold;" text="If the total price of books is (condition) £(condition value), then discount by (amount)%:" wrapText="true" />
@@ -96,11 +98,11 @@
                         <TextField fx:id="newTotalCondition" maxWidth="68.0" minWidth="68.0" prefWidth="68.0" promptText="Condition" />
                         <TextField fx:id="newTotalConditionValue" maxWidth="106.0" minWidth="106.0" prefWidth="106.0" promptText="Condition £Value" />
                         <TextField fx:id="newTotalAmount" maxWidth="68.0" minWidth="68.0" prefWidth="68.0" promptText="Amount%" />
-                        <Button fx:id="addTotalDiscount" maxWidth="100.0" minWidth="100.0" onAction="#addTotalDiscount" prefWidth="100.0" text="Add on total" />
-                        <Button fx:id="removeTotalDiscount" maxWidth="115.0" minWidth="115.0" onAction="#removeTotalDiscount" prefWidth="115.0" text="Remove on total" />
+                        <Button id="addTotalDiscount" maxWidth="100.0" minWidth="100.0" onAction="#addTotalDiscount" prefWidth="100.0" text="Add on total" />
+                        <Button id="removeTotalDiscount" maxWidth="115.0" minWidth="115.0" onAction="#removeTotalDiscount" prefWidth="115.0" text="Remove on total" />
                     </HBox>
                 </VBox>
-                <Label fx:id="msg" style="-fx-font-weight:bold;-fx-text-fill:#924EAB" text="" GridPane.columnIndex="0" GridPane.rowIndex="6" />
+                <Label fx:id="msg" style="-fx-font-weight:bold;-fx-text-fill:#924EAB" GridPane.columnIndex="0" GridPane.rowIndex="6" />
             </GridPane>
         </HBox>
     </center>

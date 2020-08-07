@@ -17,7 +17,6 @@ import Model.*;
 
 public class LoginViewController {
 
-    private Alert a;
     private static ObservableList<Book> booksList;
     private static ObservableList<Discount> discountsPerBookList;
     private static ObservableList<Discount> discountsOnTotalList;
@@ -25,10 +24,10 @@ public class LoginViewController {
 
     public void transferLists(ObservableList<Book> booksList, ObservableList<Discount> discountsPerBookList,
                               ObservableList<Discount> discountsOnTotalList, ObservableList<Book>  shoppingList) {
-        this.booksList = booksList;
-        this.discountsPerBookList = discountsPerBookList;
-        this.discountsOnTotalList = discountsOnTotalList;
-        this.shoppingList = shoppingList;
+        LoginViewController.booksList = booksList;
+        LoginViewController.discountsPerBookList = discountsPerBookList;
+        LoginViewController.discountsOnTotalList = discountsOnTotalList;
+        LoginViewController.shoppingList = shoppingList;
 
     }
 
@@ -45,16 +44,14 @@ public class LoginViewController {
         HomeViewController homeViewController = loader.getController();
         homeViewController.transferLists(booksList, discountsPerBookList, discountsOnTotalList, shoppingList);
 
-        Scene customerScene = new Scene(root, 1200, 830);
-
         Stage primaryStage = (Stage) view.getScene().getWindow();
-        primaryStage.setScene(customerScene);
+        primaryStage.setScene(new Scene(root, 1200, 830));
         primaryStage.show();
     }
 
     @FXML
     void exit(ActionEvent e) {
-        a = new Alert(Alert.AlertType.CONFIRMATION);
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
         a.setContentText("Are you sure you want to exit?");
         Optional<ButtonType> result = a.showAndWait();
         ButtonType button = result.orElse(ButtonType.CANCEL);
@@ -65,7 +62,7 @@ public class LoginViewController {
     }
 
     @FXML
-    void login(ActionEvent e) throws IOException {
+    void loginBtn(ActionEvent e) throws IOException {
         if(username.getText().equals("Admin") && password.getText().equals("Password")) {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/BookkeeperView.fxml"));
             Parent root = loader.load();
@@ -73,10 +70,8 @@ public class LoginViewController {
             BookkeeperViewController bookkeeperViewController = loader.getController();
             bookkeeperViewController.transferLists(booksList, discountsPerBookList, discountsOnTotalList, shoppingList);
 
-            Scene bookkeeperScene = new Scene(root, 1200, 830);
-
             Stage primaryStage = (Stage) view.getScene().getWindow();
-            primaryStage.setScene(bookkeeperScene);
+            primaryStage.setScene(new Scene(root, 1200, 830));
             primaryStage.show();
         } else if(username.getText().isEmpty()) {
             msg.setText("Username cannot be left empty.");

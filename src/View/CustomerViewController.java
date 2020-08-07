@@ -1,6 +1,7 @@
 package View;
 
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,11 +25,31 @@ import Model.*;
 
 public class CustomerViewController implements Initializable {
 
-    private Alert a;
-    private static ObservableList<Book> booksList;
-    private static ObservableList<Discount> discountsPerBookList;
-    private static ObservableList<Discount> discountsOnTotalList;
-    private static ObservableList<Book> shoppingList;
+    //initialising for TestFX
+    public ObservableList<Book> booksList =
+            FXCollections.observableArrayList(
+                    new Book("Moby Dick", 1851, 15.20),
+                    new Book("The Terrible Privacy of Maxwell Sim", 2010, 13.14),
+                    new Book("Still Life With Woodpecker", 1980, 11.05),
+                    new Book("Sleeping Murder", 1976, 10.24),
+                    new Book("Three Men in a Boat", 1889, 12.87),
+                    new Book("The Time Machine", 1895, 10.43),
+                    new Book("The Caves of Steel", 1954, 8.12),
+                    new Book("Idle Thoughts of an Idle Fellow", 1886, 7.32),
+                    new Book("A Christmas Carol", 1843, 4.23),
+                    new Book("A Tale of Two Cities", 1859, 6.32),
+                    new Book("Great Expectations", 1861, 13.21)
+            );
+    public ObservableList<Discount> discountsPerBookList =
+            FXCollections.observableArrayList(
+                    new Discount(">", 2000, 10)
+            );
+    public ObservableList<Discount> discountsOnTotalList =
+            FXCollections.observableArrayList(
+                    new Discount(">", 30, 5)
+            );
+    public ObservableList<Book> shoppingList = FXCollections.observableArrayList();
+    public double costs=0;
 
     public void transferLists(ObservableList<Book> booksList, ObservableList<Discount> discountsPerBookList,
                               ObservableList<Discount> discountsOnTotalList, ObservableList<Book>  shoppingList) {
@@ -43,9 +64,9 @@ public class CustomerViewController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         Platform.runLater(() -> {
 
-            bookTitleCol.setCellValueFactory(new PropertyValueFactory<Book, String>("bookTitle"));
-            bookYearCol.setCellValueFactory(new PropertyValueFactory<Book, Integer>("bookYear"));
-            bookPriceCol.setCellValueFactory(new PropertyValueFactory<Book, Double>("bookPrice"));
+            bookTitleCol.setCellValueFactory(new PropertyValueFactory<>("bookTitle"));
+            bookYearCol.setCellValueFactory(new PropertyValueFactory<>("bookYear"));
+            bookPriceCol.setCellValueFactory(new PropertyValueFactory<>("bookPrice"));
             NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
             bookPriceCol.setCellFactory(tc -> new TableCell<Book, Double>() {
                 @Override
@@ -65,9 +86,9 @@ public class CustomerViewController implements Initializable {
             availableBooks.getFocusModel().focus(0);
             availableBooks.setPlaceholder(new Label("No books available"));
 
-            cartTitleCol.setCellValueFactory(new PropertyValueFactory<Book, String>("bookTitle"));
-            cartYearCol.setCellValueFactory(new PropertyValueFactory<Book, Integer>("bookYear"));
-            cartPriceCol.setCellValueFactory(new PropertyValueFactory<Book, Double>("bookPrice"));
+            cartTitleCol.setCellValueFactory(new PropertyValueFactory<>("bookTitle"));
+            cartYearCol.setCellValueFactory(new PropertyValueFactory<>("bookYear"));
+            cartPriceCol.setCellValueFactory(new PropertyValueFactory<>("bookPrice"));
             cartPriceCol.setCellFactory(tc -> new TableCell<Book, Double>() {
                 @Override
                 protected void updateItem(Double price, boolean empty) {
@@ -86,29 +107,30 @@ public class CustomerViewController implements Initializable {
             shoppingCart.getFocusModel().focus(0);
             shoppingCart.setPlaceholder(new Label("Your shopping cart is empty"));
 
-            String discountsText = "";
+            StringBuilder discountsText = new StringBuilder();
             if(discountsPerBookList.isEmpty() && discountsOnTotalList.isEmpty()) {
-                discountsText="There are no discounts available at this time.";
+                discountsText = new StringBuilder("There are no discounts available at this time.");
             } else {
                 for(Discount d : discountsPerBookList) {
-                    discountsText += String.format("If book publication year %s %.0f, then discount by %d%%\n",
-                                                    d.getCondition(), d.getConditionValue(), d.getAmount());
+                    discountsText.append(String.format("If book publication year %s %.0f, then discount by %d%%\n",
+                            d.getCondition(), d.getConditionValue(), d.getAmount()));
                 }
                 for(Discount d : discountsOnTotalList) {
-                    discountsText += String.format("If total price %s %.2f, then discount by %d%%\n",
-                                                    d.getCondition(), d.getConditionValue(), d.getAmount());
+                    discountsText.append(String.format("If total price %s %.2f, then discount by %d%%\n",
+                            d.getCondition(), d.getConditionValue(), d.getAmount()));
                 }
             }
 
-            discounts.setText(discountsText);
+            discounts.setText(discountsText.toString());
             receipt.setText(calculateTotal()+applyDiscounts());
+            finalCost.setText(String.format("Final Cost: £%.2f",costs));
 
         });
 
     }
 
     @FXML private HBox view;
-    @FXML private Label msg;
+    @FXML private Label msg, finalCost;
     @FXML private TextArea discounts, receipt;
 
     @FXML private TableView<Book> availableBooks;
@@ -129,16 +151,14 @@ public class CustomerViewController implements Initializable {
         HomeViewController homeViewController = loader.getController();
         homeViewController.transferLists(booksList, discountsPerBookList, discountsOnTotalList, shoppingList);
 
-        Scene customerScene = new Scene(root, 1200, 830);
-
         Stage primaryStage = (Stage) view.getScene().getWindow();
-        primaryStage.setScene(customerScene);
+        primaryStage.setScene(new Scene(root, 1200, 830));
         primaryStage.show();
     }
 
     @FXML
     void exit(ActionEvent e) {
-        a = new Alert(Alert.AlertType.CONFIRMATION);
+        Alert a = new Alert(Alert.AlertType.CONFIRMATION);
         a.setContentText("Are you sure you want to exit?");
         Optional<ButtonType> result = a.showAndWait();
         ButtonType button = result.orElse(ButtonType.CANCEL);
@@ -156,6 +176,7 @@ public class CustomerViewController implements Initializable {
                     selectedBook.getBookPrice()));
             shoppingCart.getItems().add(selectedBook);
             receipt.setText(calculateTotal()+applyDiscounts());
+            finalCost.setText(String.format("Final Cost: £%.2f", costs));
             msg.setText("Added to cart successfully.");
         } catch(Exception ex) {
             msg.setText("There are no books to add!");
@@ -169,6 +190,7 @@ public class CustomerViewController implements Initializable {
             shoppingList.remove(selectedBook);
             shoppingCart.getItems().remove(selectedBook);
             receipt.setText(calculateTotal()+applyDiscounts());
+            finalCost.setText(String.format("Final Cost: £%.2f",costs));
             msg.setText("Removed from cart successfully.");
         } catch(IndexOutOfBoundsException ex) {
             msg.setText("Please select a book to remove.");
@@ -181,11 +203,12 @@ public class CustomerViewController implements Initializable {
         for(Book b: shoppingList) {
             costs += b.getBookPrice();
         }
-        return total+= String.format("\u00A3%.2f\n", costs);
+        total+=String.format("\u00A3%.2f\n", costs);
+        return total;
     }
 
     private String applyDiscounts() {
-        String discountedPrice = "\nDiscounts applied:\n";
+        StringBuilder discountedPrice = new StringBuilder("\nDiscounts applied:\n");
         double costs = 0;
         boolean discountApplied;
         for(Book b: shoppingList) {
@@ -227,8 +250,8 @@ public class CustomerViewController implements Initializable {
                 }
 
                 if(discountApplied) {
-                    discountedPrice += String.format("Discount applied of %d%% off on the book \"%s\"\n",
-                                                      d.getAmount(), b.getBookTitle());
+                    discountedPrice.append(String.format("Discount applied of %d%% off on the book \"%s\"\n",
+                            d.getAmount(), b.getBookTitle()));
                 }
             }
             if(!discountApplied) {
@@ -274,15 +297,21 @@ public class CustomerViewController implements Initializable {
                     break;
             }
             if(discountApplied) {
-                discountedPrice+= String.format("Discount applied of %d%% off on the total\n", d.getAmount());
+                discountedPrice.append(String.format("Discount applied of %d%% off on the total\n", d.getAmount()));
             }
         }
 
-        if(discountedPrice.equals("\nDiscounts applied:\n")) {
-            discountedPrice = "\nDiscounts applied: none";
+        if(discountedPrice.toString().equals("\nDiscounts applied:\n")) {
+            discountedPrice = new StringBuilder("\nDiscounts applied: none");
         }
-        discountedPrice+= String.format("\nTotal price after applying discounts: \u00A3%.2f", costs);
 
-        return discountedPrice;
+        setCosts(costs);
+        discountedPrice.append(String.format("\nTotal price after applying discounts: \u00A3%.2f", costs));
+
+        return discountedPrice.toString();
+    }
+
+    private void setCosts(double costs) {
+        this.costs=costs;
     }
 }

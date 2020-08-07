@@ -35,28 +35,4 @@ public class Discount {
     public void setAmount(int amount) {
         this.amount = amount;
     }
-
-    @Override
-    public boolean equals(Object obj){
-        if(obj == null) {
-            return false;
-        }
-        if(obj instanceof Discount) {
-            Discount d = (Discount) obj;
-            return (d.condition.equals(this.condition) &&
-                    d.conditionValue == this.conditionValue &&
-                    d.amount == this.amount);
-        } else {
-            return false;
-        }
-    }
-
-    @Override
-    public int hashCode(){
-        int hashcode = 0;
-        hashcode += condition.hashCode();
-        hashcode += conditionValue*20;
-        hashcode += amount*20;
-        return hashcode;
-    }
 }

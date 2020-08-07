@@ -4,7 +4,8 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane fx:id="wrap" prefHeight="830" prefWidth="1200" styleClass="root" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="View.CustomerViewController">
+<BorderPane styleClass="root" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="View.CustomerViewController">
     <stylesheets>
         <URL value="@Style.css" />
     </stylesheets>
@@ -16,14 +17,14 @@
     </top>
 
     <center>
-        <HBox fx:id="view">
-            <VBox id="left" fx:id="left" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" BorderPane.alignment="CENTER">
+        <HBox fx:id="view" maxHeight="830.0" minHeight="830.0" prefHeight="830.0">
+            <VBox id="left" maxWidth="150.0" minWidth="150.0" prefWidth="150.0" BorderPane.alignment="CENTER">
                 <Label id="leftText" text="Options:" />
                 <Button id="logoutBtn" onAction="#logout" text="Logout" />
                 <Button id="exitBtn" onAction="#exit" text="Exit" />
             </VBox>
 
-            <GridPane fx:id="center" hgap="10.0" maxHeight="800.0" maxWidth="1050.0" minHeight="800.0" minWidth="1050.0" prefHeight="800.0" prefWidth="1050.0" vgap="10.0" BorderPane.alignment="CENTER">
+            <GridPane hgap="10.0" maxHeight="800.0" maxWidth="1050.0" minHeight="800.0" minWidth="1050.0" prefHeight="800.0" prefWidth="1050.0" vgap="10.0" BorderPane.alignment="CENTER">
                 <columnConstraints>
                     <ColumnConstraints prefWidth="525" />
                     <ColumnConstraints prefWidth="525" />
@@ -37,10 +38,10 @@
                <RowConstraints />
                 </rowConstraints>
 
-                <Label id="title" text="📖 Welcome Customer!" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                <Label id="content" alignment="TOP_LEFT" maxHeight="55.0" minHeight="55.0" prefHeight="55.0" text="Below is the list of books available. Please select the books you would like to purchase." wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                <Label id="mainTitle" text="📖 Welcome Customer!" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                <Label id="mainContent" alignment="TOP_LEFT" maxHeight="55.0" minHeight="55.0" prefHeight="55.0" text="Below is the list of books available. Please select the books you would like to purchase." wrapText="true" GridPane.columnIndex="0" GridPane.rowIndex="1" />
 
-                <TableView fx:id="availableBooks" maxHeight="350.0" minHeight="350.0" prefHeight="350.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                <TableView id="availableBooks" fx:id="availableBooks" maxHeight="350.0" minHeight="350.0" prefHeight="350.0" GridPane.columnIndex="0" GridPane.rowIndex="3">
                     <columns>
                         <TableColumn fx:id="bookTitleCol" maxWidth="300.0" minWidth="300.0" prefWidth="300.0" text="Title" />
                         <TableColumn fx:id="bookYearCol" maxWidth="100.0" minWidth="100.0" prefWidth="100.0" text="Year Published" />
@@ -57,7 +58,7 @@
                 <HBox spacing="10" GridPane.columnIndex="1" GridPane.rowIndex="2">
                     <Button id="addBtn" onAction="#addBook" text="Add book" />
                     <Button id="removeBtn" onAction="#removeBook" text="Remove book" />
-                    <Label fx:id="msg" text="" style="-fx-font-weight:bold;-fx-text-fill:#924EAB"/>
+                    <Label fx:id="msg" style="-fx-font-weight:bold;-fx-text-fill:#924EAB" />
                 </HBox>
 
                 <TableView fx:id="shoppingCart" maxHeight="350.0" minHeight="350.0" prefHeight="350.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
@@ -69,8 +70,10 @@
                 </TableView>
 
                 <Label id="title" style="-fx-padding:20 0 0 0;" text="📜 Receipt" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-                <TextArea id="receipt" fx:id="receipt" editable="false" maxHeight="150.0" minHeight="150.0" prefHeight="150.0" wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="5" />
-
+                <VBox GridPane.columnIndex="1" GridPane.rowIndex="5">
+                    <TextArea id="receipt" fx:id="receipt" editable="false" maxHeight="120.0" minHeight="120.0" prefHeight="120.0" wrapText="true" />
+                    <Label id="finalCost" fx:id="finalCost" alignment="CENTER" text="Final Cost: £0.00" />
+                </VBox>
             </GridPane>
         </HBox>
     </center>
